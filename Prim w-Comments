@@ -1,0 +1,173 @@
+/*
+ Group Members:
+ Algorithms and Data Structures
+ Section CH 
+ Project 3 - Part 2 - Prim's Algorithm 
+ */
+package prim;
+
+/**
+ *
+ * @author Hanaa
+ */
+public class Prim {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        final int INF = 10000;
+
+        int[][] Matrix = {
+            // A  B   C    D    E    F    G   H   I
+            // a
+            {INF, 4, INF, INF, INF, INF, INF, 8, INF},
+            // b
+            {4, INF, 8, INF, INF, INF, INF, 11, INF},
+            // c
+            {INF, 8, INF, 7, INF, 4, INF, INF, 2},
+            // d
+            {INF, INF, 7, INF, 9, 14, INF, INF, INF},
+            // e
+            {INF, INF, INF, 9, INF, 10, INF, INF, INF},
+            // f
+            {INF, INF, 4, 14, 10, INF, 2, INF, INF},
+            // g 
+            {INF, INF, INF, INF, INF, 2, INF, 1, 6},
+            // h
+            {8, 11, INF, INF, INF, INF, 1, INF, 7},
+            // i
+            {INF, INF, 2, INF, INF, INF, 6, 7, INF}};
+
+        // initillize the source, and the Minimum spanning tree array
+        int source = 0;
+        
+        Vertex[][] minST = Prim(Matrix, INF, source);
+        
+        // print the minimum spanning tree edges 
+        print(minST);
+    
+    
+    } // main 
+    
+//***********************************************
+    
+    public static Vertex[][] Prim(int[][] Matrix, int INF, int source) {
+        
+        // array to indicate weather the vertex is visited or not   
+        int[] visited = new int[Matrix.length];
+        // source is visited 
+        visited[0] = 1;
+        
+        // initial values = source
+        int parentIndex = source;
+        int fringeIndex = source;
+        
+       
+        int totalCost = 0;
+        int smallestCost = 0;
+        // just array for the whole letters 
+        char[] alphabet = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+        
+        // array for letters with the range of the original matrix  
+        char[] letters = new char[Matrix.length];
+        
+        // initilize letter array
+        for (int i = 0; i < Matrix.length; i++) {
+            letters[i] = alphabet[i];
+        }
+        
+        // minimum edge for create the final minimum spanning tree 
+        Vertex[][] MinEdges = new Vertex[Matrix.length][2];
+
+        System.out.println("The Edges Are: ");
+        
+        //Spanning tree has E=V-1
+        int edge = Matrix.length-1;
+        
+        
+        for (int i = 0; i <edge; i++) { 
+            
+            smallestCost = INF;
+            
+            for (int j = 0; j < Matrix.length; j++) {
+               
+                // the vertex 
+                if (visited[j] == 1) {
+                    for (int k = 0; k < Matrix.length; k++) {
+                      // the neighbours 
+                        if (visited[k] != 1) {
+                            // compare to find the minimum cost 
+                            if (smallestCost > Matrix[j][k]) {
+                               
+                                smallestCost = Matrix[j][k];
+                                
+                                // (u,v) = (j,k) 
+                                parentIndex = j;
+                                fringeIndex = k;
+                            }
+                        } // if-Not visited 
+                    } // for 2
+                    
+                } // if-visited 
+            } // for 1st
+            
+            // we've done visting the neighbours 
+            visited[fringeIndex] = 1;
+
+            // object to indicate the parent(location,letter) 
+            Vertex Parent = new Vertex();
+            // location of the parent 
+            Parent.index = parentIndex;
+            // the letter of the parent 
+            Parent.label = letters[parentIndex];
+         
+
+
+            // we added the fringe into the tree, so it is become neighbor 
+            // object to indicate the info about the neighbor (location,letter,cost)  
+            Vertex neighbor = new Vertex();
+            neighbor.index = fringeIndex;
+            neighbor.label = letters[fringeIndex];
+            neighbor.weight = smallestCost;
+
+            // arrange it in two coloumns: 
+            // first[0] is for the parent or the main edge
+            // second[1] is for the neighbors with minimum weight
+            MinEdges[i][0] = Parent;
+            MinEdges[i][1] = neighbor;
+            
+            
+    } // for edges 
+       
+        // return the final collection with minimum edges, to perform a minimum spanning tree.
+        return MinEdges;
+    }
+    
+    // *********************************
+
+    public static void print(Vertex[][] minST) {
+        
+        
+        int total = 0;
+     
+        for (int i = 0; i < minST.length; i++) {
+
+            if (minST[i][0] != null || minST[i][1] !=null) {
+                
+                // print the parent with it's neighbor 
+                System.out.print("(" + minST[i][0].getLabel() + "," + minST[i][1].getLabel() + ") " + " with the cost of " + minST[i][1].weight + "\n");
+                // collect the total weight for the MST
+                total += minST[i][1].weight;
+
+            }
+
+        }
+
+        // print weight 
+        System.out.println("The minimum weight is: " + total);
+        
+    } // print method 
+    
+    // *************************************
+} // class
